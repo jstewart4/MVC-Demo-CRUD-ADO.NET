@@ -68,35 +68,75 @@ namespace MVCDemoCRUD.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Product/Edit/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
         public ActionResult Edit(int id)
         {
+            ProductModel productModel = new ProductModel();
+            DataTable dataTblProduct = new DataTable();
+            using (SqlConnection sqlCon = new SqlConnection(connectionString))
+            {
+                sqlCon.Open();
+                string query = "SELECT * FROM PRODUCT Where ProductID = @ProductID";
+                SqlDataAdapter sqlDataAdap = new SqlDataAdapter(query, sqlCon);
+                sqlDataAdap.SelectCommand.Parameters.AddWithValue("@ProductID", id);
+                sqlDataAdap.Fill(dataTblProduct);
+            }
+            if (dataTblProduct.Rows.Count == 1)
+            {
+                productModel.ProductID = Convert.ToInt32(dataTblProduct.Rows[0][0].ToString());
+                productModel.ProductName = dataTblProduct.Rows[0][1].ToString();
+                productModel.Price = Convert.ToDecimal(dataTblProduct.Rows[0][2].ToString());
+                productModel.Count = Convert.ToInt32(dataTblProduct.Rows[0][3].ToString());
+                return View(productModel);
+            }
             return View();
         }
 
-        // POST: Product/Edit/5
+        /// <summary>
+        /// Method to pass the paramter values from the form to an UPDATE query to modify the chosen product
+        /// </summary>
+        /// <param name="productModel">data sent from the form will be binded to this productModel object</param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(ProductModel productModel)
         {
-            try
+            using (SqlConnection sqlCon = new SqlConnection(connectionString))
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
+                // here we do an insert into the product table that takes the data from the form and enters it into the appropriate columns
+                sqlCon.Open();
+                string query = "UPDATE Product SET ProductName = @ProductName, Price = @Price, Count = @Count WHERE ProductID = @ProductID";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlCon);
+                sqlCmd.Parameters.AddWithValue("@ProductID", productModel.ProductID);
+                sqlCmd.Parameters.AddWithValue("@ProductName", productModel.ProductName);
+                sqlCmd.Parameters.AddWithValue("@Price", productModel.Price);
+                sqlCmd.Parameters.AddWithValue("@Count", productModel.Count);
+                sqlCmd.ExecuteNonQuery();
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
 
-        // GET: Product/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: Product/Delete/5
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {
