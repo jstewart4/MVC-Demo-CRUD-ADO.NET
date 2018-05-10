@@ -14,7 +14,7 @@ namespace MVCDemoCRUD.Controllers
         string connectionString = @"Data Source=.;Initial Catalog=MVCCrud;Integrated Security=True";
 
         /// <summary>
-        /// 
+        /// Method used to select all products from the product table and display in the index View
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -47,7 +47,7 @@ namespace MVCDemoCRUD.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Method to pass the paramter values from the form to an INSERT query to add the entered product
         /// </summary>
         /// <param name="productModel">data sent from the form will be binded to this productModel object</param>
         /// <returns></returns>
@@ -69,9 +69,9 @@ namespace MVCDemoCRUD.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Method used to get the product details to edit in Edit View form
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">the passed ProductID to be edited</param>
         /// <returns></returns>
         [HttpGet]
         public ActionResult Edit(int id)
@@ -86,7 +86,7 @@ namespace MVCDemoCRUD.Controllers
                 sqlDataAdap.SelectCommand.Parameters.AddWithValue("@ProductID", id);
                 sqlDataAdap.Fill(dataTblProduct);
             }
-            if (dataTblProduct.Rows.Count == 1)
+            if (dataTblProduct.Rows.Count == 1) // check if there is a row, if there is there is data associated with that product id
             {
                 productModel.ProductID = Convert.ToInt32(dataTblProduct.Rows[0][0].ToString());
                 productModel.ProductName = dataTblProduct.Rows[0][1].ToString();
@@ -121,35 +121,22 @@ namespace MVCDemoCRUD.Controllers
         }
 
         /// <summary>
-        /// 
+        /// Method to delete the chosen product with the ProductID
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">the passed ProductID to be deleted</param>
         /// <returns></returns>
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            return View();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="collection"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
+            using (SqlConnection sqlCon = new SqlConnection(connectionString))
             {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
+                sqlCon.Open();
+                string query = "DELETE FROM Product WHERE ProductID = @ProductID";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlCon);
+                sqlCmd.Parameters.AddWithValue("@ProductID", id);
+                sqlCmd.ExecuteNonQuery();
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
     }
 }
