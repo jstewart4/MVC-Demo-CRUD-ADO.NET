@@ -46,20 +46,26 @@ namespace MVCDemoCRUD.Controllers
             return View(new ProductModel());
         }
 
-        // POST: Product/Create
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="productModel">data sent from the form will be binded to this productModel object</param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(ProductModel productModel)
         {
-            try
+            using (SqlConnection sqlCon = new SqlConnection(connectionString))
             {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
+                // here we do an insert into the product table that takes the data from the form and enters it into the appropriate columns
+                sqlCon.Open();
+                string query = "INSERT INTO Product VALUES(@ProductName,@Price,@Count)";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlCon);
+                sqlCmd.Parameters.AddWithValue("@ProductName", productModel.ProductName);
+                sqlCmd.Parameters.AddWithValue("@Price", productModel.Price);
+                sqlCmd.Parameters.AddWithValue("@Count", productModel.Count);
+                sqlCmd.ExecuteNonQuery();
             }
-            catch
-            {
-                return View();
-            }
+            return RedirectToAction("Index");
         }
 
         // GET: Product/Edit/5
