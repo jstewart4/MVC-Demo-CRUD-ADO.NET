@@ -11,6 +11,7 @@ namespace MVCDemoCRUD.Controllers
     public class ProductController : Controller
     {
         string connectionString = @"Data Source=.;Initial Catalog=MVCCrud;Integrated Security=True";
+
         [HttpGet]
         public ActionResult Index()
         {
@@ -25,6 +26,7 @@ namespace MVCDemoCRUD.Controllers
                 // now fill the results from the quert into the data table
                 sqlDataAdap.Fill(dataTblProduct);
             }
+            // pass the data table into the View
             return View(dataTblProduct);
         }
 
