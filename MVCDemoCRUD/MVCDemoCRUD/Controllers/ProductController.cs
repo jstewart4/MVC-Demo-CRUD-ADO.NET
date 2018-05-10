@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data;
 using System.Data.SqlClient;
+using MVCDemoCRUD.Models;
 
 namespace MVCDemoCRUD.Controllers
 {
@@ -12,6 +13,10 @@ namespace MVCDemoCRUD.Controllers
     {
         string connectionString = @"Data Source=.;Initial Catalog=MVCCrud;Integrated Security=True";
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Index()
         {
@@ -30,16 +35,15 @@ namespace MVCDemoCRUD.Controllers
             return View(dataTblProduct);
         }
 
-        // GET: Product/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Product/Create
+        /// <summary>
+        /// Using this action method we will return a form to enter the details of a new product
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         public ActionResult Create()
         {
-            return View();
+            // pass an object of the ProductModel class
+            return View(new ProductModel());
         }
 
         // POST: Product/Create

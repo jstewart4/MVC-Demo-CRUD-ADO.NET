@@ -1,9 +1,9 @@
 ﻿@model System.Data.DataTable
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Product List";
 }
 
-<h2>Index</h2>
+<h2>Product List</h2>
 <table class="table table-bordered table-striped">
     <tr>
         <th>Product Name</th>
@@ -21,4 +21,7 @@
         </tr>
     }
 </table>
+
+@* here we create a link to add new products inside the index view (the action is first param, second param is the controller) *@
+<a href="@Url.Action("Create","Product")" class="btn btn-success">Add Product</a>
 
